@@ -284,22 +284,32 @@ html,body{height:100%;font-family:'Onest',sans-serif;background:var(--bg);color:
 
 /* ======= PREVIEW EDITOR ======= */
 .ed-ready{position:absolute!important}
-.ed-ready:hover{outline:1.5px dashed #4a9eff;outline-offset:4px}
+.ed-ready:hover{outline:1.5px dashed #4a9eff;outline-offset:2px}
 .ed-controls{
-  display:none;position:absolute;top:-28px;right:0;
-  flex-direction:row;gap:3px;z-index:100;
+  display:none;position:absolute;top:2px;right:2px;
+  flex-direction:row;gap:2px;z-index:200;
+  background:rgba(255,255,255,0.92);
+  border-radius:5px;padding:2px;
+  box-shadow:0 1px 6px rgba(0,0,0,0.18);
 }
 .ed-ready:hover .ed-controls{display:flex}
 .ed-btn-del,.ed-btn-size{
   background:#1c1c1c;color:#fff;border:none;
-  width:22px;height:22px;border-radius:4px;
-  font-size:13px;cursor:pointer;display:flex;
+  width:20px;height:20px;border-radius:3px;
+  font-size:12px;cursor:pointer;display:flex;
   align-items:center;justify-content:center;
   line-height:1;padding:0;
 }
 .ed-btn-del{background:#c0392b}
 .ed-btn-del:hover{background:#e74c3c}
 .ed-btn-size:hover{background:#444}
+.ed-resize{
+  display:none;position:absolute;bottom:-5px;right:-5px;
+  width:12px;height:12px;
+  background:#4a9eff;border-radius:2px;
+  cursor:se-resize;z-index:200;
+}
+.ed-ready:hover .ed-resize{display:block}
 
 
 /* ======================= */
@@ -1328,9 +1338,11 @@ liveUpdate();
   }
 
   function makeEditable(el){
+    if(el.dataset.edInit) return;
+    el.dataset.edInit = '1';
     el.classList.add('ed-ready');
 
-    // Controls wrapper
+    // Controls wrapper (inside element, top-right)
     const wrap = document.createElement('div');
     wrap.className = 'ed-controls';
 
@@ -1338,53 +1350,43 @@ liveUpdate();
     const btnDel = document.createElement('button');
     btnDel.className = 'ed-btn-del';
     btnDel.innerHTML = '✕';
-    btnDel.title = 'Удалить';
+    btnDel.title = 'Скрыть';
+    btnDel.onmousedown = (e) => { e.stopPropagation(); };
     btnDel.onclick = (e) => {
       e.stopPropagation();
-      el.style.display = 'none';
+      el.style.visibility = 'hidden';
+      el.dataset.hidden = '1';
     };
-
-    // Size buttons
-    const btnBig = document.createElement('button');
-    btnBig.className = 'ed-btn-size';
-    btnBig.innerHTML = '+';
-    btnBig.title = 'Увеличить';
-    btnBig.onclick = (e) => { e.stopPropagation(); scaleEl(el, 1.1); };
-
-    const btnSmall = document.createElement('button');
-    btnSmall.className = 'ed-btn-size';
-    btnSmall.innerHTML = '−';
-    btnSmall.title = 'Уменьшить';
-    btnSmall.onclick = (e) => { e.stopPropagation(); scaleEl(el, 0.9); };
-
-    wrap.appendChild(btnSmall);
-    wrap.appendChild(btnBig);
     wrap.appendChild(btnDel);
     el.appendChild(wrap);
 
-    // Drag logic
+    // Resize handle (bottom-right corner)
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'ed-resize';
+    el.appendChild(resizeHandle);
+
+    // --- DRAG ---
     let isDragging = false;
     let startX, startY, origLeft, origTop;
 
     el.addEventListener('mousedown', (e) => {
-      if(e.target.closest('.ed-controls')) return;
+      if(e.target.closest('.ed-controls') || e.target === resizeHandle) return;
       isDragging = true;
       const page = el.closest('.preview-page');
       const pageRect = page.getBoundingClientRect();
-
-      // Get current position
       const elRect = el.getBoundingClientRect();
-      origLeft = (elRect.left - pageRect.left) / SCALE;
-      origTop = (elRect.top - pageRect.top) / SCALE;
 
+      if(!el.dataset.posInit){
+        el.dataset.posInit = '1';
+        el.style.transform = 'none';
+        el.style.left = ((elRect.left - pageRect.left) / SCALE) + 'px';
+        el.style.top = ((elRect.top - pageRect.top) / SCALE) + 'px';
+      }
+
+      origLeft = parseFloat(el.style.left) || 0;
+      origTop = parseFloat(el.style.top) || 0;
       startX = e.clientX;
       startY = e.clientY;
-
-      // Switch to absolute left/top, remove transform centering
-      el.style.transform = 'none';
-      el.style.left = origLeft + 'px';
-      el.style.top = origTop + 'px';
-
       e.preventDefault();
     });
 
@@ -1397,14 +1399,35 @@ liveUpdate();
     });
 
     document.addEventListener('mouseup', () => { isDragging = false; });
-  }
 
-  function scaleEl(el, factor){
-    const cur = parseFloat(el.dataset.scale || '1');
-    const next = cur * factor;
-    el.dataset.scale = next;
-    el.style.transform = `scale(${next})`;
-    el.style.transformOrigin = 'center center';
+    // --- RESIZE via corner handle ---
+    let isResizing = false;
+    let resStartX, resStartY, resOrigW, resOrigH, resOrigScale;
+
+    resizeHandle.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      isResizing = true;
+      resStartX = e.clientX;
+      resStartY = e.clientY;
+      const rect = el.getBoundingClientRect();
+      resOrigW = rect.width / SCALE;
+      resOrigH = rect.height / SCALE;
+      resOrigScale = parseFloat(el.dataset.scale || '1');
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if(!isResizing) return;
+      const dx = (e.clientX - resStartX) / SCALE;
+      const dy = (e.clientY - resStartY) / SCALE;
+      const delta = (Math.abs(dx) > Math.abs(dy) ? dx : dy);
+      const newScale = Math.max(0.3, resOrigScale + delta / 150);
+      el.dataset.scale = newScale;
+      el.style.transform = `scale(${newScale})`;
+      el.style.transformOrigin = 'top left';
+    });
+
+    document.addEventListener('mouseup', () => { isResizing = false; });
   }
 
   // Init when preview opens
