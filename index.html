@@ -1305,7 +1305,17 @@ function generatePDF(){
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
-          html: document.getElementById('printDoc').innerHTML,
+          html: document.getElementById('modalOverlay').querySelector('.preview-page') 
+  ? Array.from(document.querySelectorAll('.preview-page'))
+      .filter(p => p.style.display !== 'none')
+      .map(p => {
+        const clone = p.cloneNode(true);
+        clone.querySelectorAll('.ed-controls,.ed-resize').forEach(el => el.remove());
+        clone.style.transform = 'none';
+        clone.style.margin = '0';
+        return `<div class="a4">${clone.innerHTML}</div>`;
+      }).join('')
+  : document.getElementById('printDoc').innerHTML,
           css: css
         })
       });
