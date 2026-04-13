@@ -1255,16 +1255,23 @@ function generatePDF(){
     const btns=document.querySelectorAll('.btn-generate');
     btns.forEach(b=>{b.textContent='Генерация...';b.disabled=true;});
     try{
+      const css=Array.from(document.styleSheets)
+        .map(s=>{try{return Array.from(s.cssRules).map(r=>r.cssText).join('\n')}catch(e){return ''}})
+        .join('\n');
+      const on=document.getElementById('objectName').value||'объект';
       const resp=await fetch('https://assistcloudai.xyz/webhook/generate-pdf',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({html: document.getElementById('printDoc').innerHTML})
+        body:JSON.stringify({
+          html: document.getElementById('printDoc').innerHTML,
+          css: css
+        })
       });
       if(!resp.ok)throw new Error('HTTP '+resp.status);
       const blob=await resp.blob();
       const a=document.createElement('a');
       a.href=URL.createObjectURL(blob);
-      a.download=`Смета_${document.getElementById('objectName').value||'объект'}.pdf`;
+      a.download=`Смета_${on}.pdf`;
       a.click();
     }catch(e){alert('Ошибка генерации PDF: '+e.message);}
     finally{btns.forEach(b=>{b.textContent='Сформировать PDF →';b.disabled=false;});}
