@@ -24,7 +24,7 @@
 html,body{height:100%;font-family:'Onest',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
 
 /* ======= APP SHELL ======= */
-.app{display:flex;height:100vh;overflow:hidden}
+.app{display:block;height:100vh;overflow:hidden}
 
 /* ======= LEFT SIDEBAR — FORM ======= */
 .sidebar{
@@ -538,72 +538,6 @@ html,body{height:100%;font-family:'Onest',sans-serif;background:var(--bg);color:
 
     </div><!-- /sidebar-scroll -->
   </div><!-- /sidebar -->
-
-  <!-- RIGHT: PREVIEW -->
-  <div class="preview-area" id="previewArea">
-    <div class="preview-toolbar">
-      <span>ПРЕДПРОСМОТР A4</span>
-      <button class="btn-generate" onclick="generatePDF()">Сформировать PDF →</button>
-    </div>
-
-    <!-- COVER PREVIEW -->
-    <div class="preview-page cover-pg" id="prevCover">
-      <div id="prevCovLogo">
-        <img id="prevLogoImg" alt="" style="max-height:70px;max-width:180px;display:none">
-        <div id="prevCircle" style="width:66px;height:66px;border:2px solid #1c1c1c;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:500" id="prevCircle">К</div>
-      </div>
-      <div id="prevCovName" style="font-size:20px;font-weight:400;letter-spacing:5px;text-transform:uppercase;margin-top:10px">КОМПАНИЯ</div>
-      <div id="prevCovSlogan" style="font-size:10px;letter-spacing:4px;color:#888;text-transform:uppercase;margin-top:3px">КАЧЕСТВО ПОД КЛЮЧ</div>
-      <div style="font-size:14px;font-weight:300;color:#555;margin-top:48px;letter-spacing:2px">Проектно-сметная документация</div>
-      <div style="position:absolute;bottom:40px;right:40px;display:flex;align-items:center;gap:6px">
-        <div id="prevFootCircle" style="width:22px;height:22px;border:1.5px solid #aaa;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;color:#aaa">К</div>
-        <div id="prevFootName" style="font-size:9px;font-weight:600;letter-spacing:2px;color:#aaa">КОМПАНИЯ</div>
-      </div>
-    </div>
-
-    <!-- PLANNING PREVIEW -->
-    <div class="preview-page" id="prevPlanning">
-      <div style="padding:40px 52px 40px;min-height:1123px;display:flex;flex-direction:column">
-        <div style="font-size:22px;font-weight:400;text-align:center;margin-bottom:28px;letter-spacing:.5px">Планирование работ:</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;flex:1">
-          <div>
-            <div id="prevPlanBox" style="border:1px solid #e5e5e5;background:#f9f9f7;min-height:280px;display:flex;align-items:center;justify-content:center;border-radius:3px;overflow:hidden">
-              <img id="prevPlanImg" alt="" style="max-width:100%;max-height:320px;object-fit:contain;display:none">
-              <div id="prevPlanPh" style="color:#ccc;font-size:36px">⬚</div>
-            </div>
-          </div>
-          <div>
-            <div id="prevObjInfo" style="font-size:11px;line-height:2;color:#333;margin-bottom:16px"></div>
-            <div style="font-size:10.5px;color:#555;line-height:1.85;margin-bottom:14px">
-              На основании осмотра объекта подготовлены следующие документы:<br>
-              – Смета строительно-монтажных работ (СМР).<br>
-              – Смета на строительные и отделочные материалы.<br>
-              – Календарный график производства работ.
-            </div>
-            <div style="font-size:12px;font-weight:500;text-align:center;margin-bottom:8px">Экспликация помещений</div>
-            <table style="width:100%;border-collapse:collapse;font-size:10.5px">
-              <thead><tr>
-                <th style="border:1px solid #ccc;padding:5px 7px;text-align:center;font-weight:500;font-size:10px;background:#f5f5f2">Помещение</th>
-                <th style="border:1px solid #ccc;padding:5px 7px;text-align:center;font-weight:500;font-size:10px;background:#f5f5f2">Пол м²</th>
-                <th style="border:1px solid #ccc;padding:5px 7px;text-align:center;font-weight:500;font-size:10px;background:#f5f5f2">Стены м²</th>
-                <th style="border:1px solid #ccc;padding:5px 7px;text-align:center;font-weight:500;font-size:10px;background:#f5f5f2">Периметр</th>
-              </tr></thead>
-              <tbody id="prevRoomsBody"></tbody>
-              <tfoot><tr>
-                <td style="text-align:right;font-weight:600;border:1px solid #ccc;padding:5px 7px;background:#f5f5f2;font-size:10.5px">ИТОГО:</td>
-                <td id="prevTotF" style="border:1px solid #ccc;padding:5px 7px;text-align:center;font-weight:600;background:#f5f5f2">—</td>
-                <td id="prevTotW" style="border:1px solid #ccc;padding:5px 7px;text-align:center;font-weight:600;background:#f5f5f2">—</td>
-                <td id="prevTotP" style="border:1px solid #ccc;padding:5px 7px;text-align:center;font-weight:600;background:#f5f5f2">—</td>
-              </tr></tfoot>
-            </table>
-          </div>
-        </div>
-        <div style="margin-top:auto;padding-top:16px;display:flex;justify-content:flex-end;align-items:center;gap:5px">
-          <div id="prevPfC" style="width:20px;height:20px;border:1.5px solid #bbb;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;color:#bbb">К</div>
-          <div id="prevPfN" style="font-size:9px;font-weight:600;letter-spacing:2px;color:#bbb">КОМПАНИЯ</div>
-        </div>
-      </div>
-    </div>
 
   </div><!-- /sidebar-scroll -->
   </div><!-- /sidebar -->
