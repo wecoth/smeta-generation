@@ -282,6 +282,25 @@ html,body{height:100%;font-family:'Onest',sans-serif;background:var(--bg);color:
 .summary-card .sc-name{font-size:12px;color:rgba(255,255,255,.55)}
 .summary-card .sc-val{font-size:12px;color:#fff;font-weight:500}
 
+/* ======= PREVIEW EDITOR ======= */
+.ed-ready{position:absolute!important}
+.ed-ready:hover{outline:1.5px dashed #4a9eff;outline-offset:4px}
+.ed-controls{
+  display:none;position:absolute;top:-28px;right:0;
+  flex-direction:row;gap:3px;z-index:100;
+}
+.ed-ready:hover .ed-controls{display:flex}
+.ed-btn-del,.ed-btn-size{
+  background:#1c1c1c;color:#fff;border:none;
+  width:22px;height:22px;border-radius:4px;
+  font-size:13px;cursor:pointer;display:flex;
+  align-items:center;justify-content:center;
+  line-height:1;padding:0;
+}
+.ed-btn-del{background:#c0392b}
+.ed-btn-del:hover{background:#e74c3c}
+.ed-btn-size:hover{background:#444}
+
 
 /* ======================= */
 /* ====== PDF / PRINT ===== */
@@ -564,15 +583,15 @@ html,body{height:100%;font-family:'Onest',sans-serif;background:var(--bg);color:
   </div>
 
   <!-- COVER PREVIEW -->
-  <div class="preview-page cover-pg" id="prevCover">
-    <div id="prevCovLogo">
+  <div class="preview-page cover-pg" id="prevCover" style="position:relative;overflow:hidden">
+    <div class="ed-el" id="prevCovLogo" data-ed="logo" style="position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;cursor:move">
       <img id="prevLogoImg" alt="" style="max-height:70px;max-width:180px;display:none">
       <div id="prevCircle" style="width:66px;height:66px;border:2px solid #1c1c1c;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:500">К</div>
     </div>
-    <div id="prevCovName" style="font-size:20px;font-weight:400;letter-spacing:5px;text-transform:uppercase;margin-top:10px">КОМПАНИЯ</div>
-    <div id="prevCovSlogan" style="font-size:10px;letter-spacing:4px;color:#888;text-transform:uppercase;margin-top:3px">КАЧЕСТВО ПОД КЛЮЧ</div>
-    <div style="font-size:14px;font-weight:300;color:#555;margin-top:48px;letter-spacing:2px">Проектно-сметная документация</div>
-    <div style="position:absolute;bottom:40px;right:40px;display:flex;align-items:center;gap:6px">
+    <div class="ed-el" id="prevCovName" data-ed="name" style="position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);font-size:20px;font-weight:400;letter-spacing:5px;text-transform:uppercase;cursor:move;white-space:nowrap">КОМПАНИЯ</div>
+    <div class="ed-el" id="prevCovSlogan" data-ed="slogan" style="position:absolute;left:50%;top:60%;transform:translate(-50%,-50%);font-size:10px;letter-spacing:4px;color:#888;text-transform:uppercase;cursor:move;white-space:nowrap">КАЧЕСТВО ПОД КЛЮЧ</div>
+    <div class="ed-el" id="prevCovType" data-ed="dtype" style="position:absolute;left:50%;top:72%;transform:translate(-50%,-50%);font-size:14px;font-weight:300;color:#555;letter-spacing:2px;cursor:move;white-space:nowrap">Проектно-сметная документация</div>
+    <div class="ed-el" id="prevCovFoot" data-ed="foot" style="position:absolute;bottom:40px;right:40px;display:flex;align-items:center;gap:6px;cursor:move">
       <div id="prevFootCircle" style="width:22px;height:22px;border:1.5px solid #aaa;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;color:#aaa">К</div>
       <div id="prevFootName" style="font-size:9px;font-weight:600;letter-spacing:2px;color:#aaa">КОМПАНИЯ</div>
     </div>
@@ -692,7 +711,7 @@ html,body{height:100%;font-family:'Onest',sans-serif;background:var(--bg);color:
     <div id="covCircle" class="cov-circle">К</div>
     <div class="cov-name" id="covName">КОМПАНИЯ</div>
     <div class="cov-slogan" id="covSlogan">КАЧЕСТВО ПОД КЛЮЧ</div>
-    <div class="cov-dtype">Проектно-сметная документация</div>
+    <div class="cov-dtype" id="covDtype">Проектно-сметная документация</div>
     <div class="cov-foot">
       <div class="cfc" id="covFtC">К</div>
       <div class="cfn" id="covFtN">КОМПАНИЯ</div>
@@ -1261,6 +1280,9 @@ function generatePDF(){
   </tr>`;}
   document.getElementById('finTotal').textContent=fmt(smrTot+matTot);
 
+  // Sync editor positions from preview to print-doc
+  syncEditorToDoc();
+
   (async()=>{
     const btns=document.querySelectorAll('.btn-generate');
     btns.forEach(b=>{b.textContent='Генерация...';b.disabled=true;});
@@ -1294,6 +1316,150 @@ addRoom('Кухня - гостинная','14.69','42.21','14.72');
 addRoom('Прихожая','3.30','15.82','5.03');
 addRoom('Сан. узел','3.57','19.86','6.92');
 liveUpdate();
+
+// ---- PREVIEW EDITOR ----
+(function(){
+  const SCALE = 0.85; // matches .preview-page transform scale
+
+  function initEditor(){
+    document.querySelectorAll('.ed-el').forEach(el => {
+      makeEditable(el);
+    });
+  }
+
+  function makeEditable(el){
+    el.classList.add('ed-ready');
+
+    // Controls wrapper
+    const wrap = document.createElement('div');
+    wrap.className = 'ed-controls';
+
+    // Delete button
+    const btnDel = document.createElement('button');
+    btnDel.className = 'ed-btn-del';
+    btnDel.innerHTML = '✕';
+    btnDel.title = 'Удалить';
+    btnDel.onclick = (e) => {
+      e.stopPropagation();
+      el.style.display = 'none';
+    };
+
+    // Size buttons
+    const btnBig = document.createElement('button');
+    btnBig.className = 'ed-btn-size';
+    btnBig.innerHTML = '+';
+    btnBig.title = 'Увеличить';
+    btnBig.onclick = (e) => { e.stopPropagation(); scaleEl(el, 1.1); };
+
+    const btnSmall = document.createElement('button');
+    btnSmall.className = 'ed-btn-size';
+    btnSmall.innerHTML = '−';
+    btnSmall.title = 'Уменьшить';
+    btnSmall.onclick = (e) => { e.stopPropagation(); scaleEl(el, 0.9); };
+
+    wrap.appendChild(btnSmall);
+    wrap.appendChild(btnBig);
+    wrap.appendChild(btnDel);
+    el.appendChild(wrap);
+
+    // Drag logic
+    let isDragging = false;
+    let startX, startY, origLeft, origTop;
+
+    el.addEventListener('mousedown', (e) => {
+      if(e.target.closest('.ed-controls')) return;
+      isDragging = true;
+      const page = el.closest('.preview-page');
+      const pageRect = page.getBoundingClientRect();
+
+      // Get current position
+      const elRect = el.getBoundingClientRect();
+      origLeft = (elRect.left - pageRect.left) / SCALE;
+      origTop = (elRect.top - pageRect.top) / SCALE;
+
+      startX = e.clientX;
+      startY = e.clientY;
+
+      // Switch to absolute left/top, remove transform centering
+      el.style.transform = 'none';
+      el.style.left = origLeft + 'px';
+      el.style.top = origTop + 'px';
+
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if(!isDragging) return;
+      const dx = (e.clientX - startX) / SCALE;
+      const dy = (e.clientY - startY) / SCALE;
+      el.style.left = (origLeft + dx) + 'px';
+      el.style.top = (origTop + dy) + 'px';
+    });
+
+    document.addEventListener('mouseup', () => { isDragging = false; });
+  }
+
+  function scaleEl(el, factor){
+    const cur = parseFloat(el.dataset.scale || '1');
+    const next = cur * factor;
+    el.dataset.scale = next;
+    el.style.transform = `scale(${next})`;
+    el.style.transformOrigin = 'center center';
+  }
+
+  // Init when preview opens
+  const origOpen = window.openPreview;
+  window.openPreview = function(){
+    origOpen();
+    setTimeout(initEditor, 100);
+  };
+
+  // Sync preview editor positions → print-doc elements
+  window.syncEditorToDoc = function(){
+    const map = {
+      'prevCovLogo':  'covPage',      // обложка — логотип
+      'prevCovName':  'covName',      // обложка — название
+      'prevCovSlogan':'covSlogan',     // обложка — слоган
+      'prevCovType':  null,           // обложка — тип документа (отдельный div)
+      'prevCovFoot':  'covFtC',       // обложка — футер
+    };
+
+    // Скрытие элементов
+    [
+      ['prevCovLogo',  ['covLogoImg','covCircle']],
+      ['prevCovName',  ['covName']],
+      ['prevCovSlogan',['covSlogan']],
+      ['prevCovType',  ['covDtype']],
+      ['prevCovFoot',  ['covFtC','covFtN']],
+    ].forEach(([prevId, docIds]) => {
+      const prevEl = document.getElementById(prevId);
+      if(!prevEl) return;
+      const hidden = prevEl.style.display === 'none';
+      docIds.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.style.display = hidden ? 'none' : '';
+      });
+    });
+
+    // Масштаб логотипа
+    const logoEl = document.getElementById('prevCovLogo');
+    if(logoEl && logoEl.dataset.scale){
+      const sc = logoEl.dataset.scale;
+      ['covLogoImg','covCircle'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.style.transform = `scale(${sc})`;
+      });
+    }
+
+    // Масштаб названия
+    const nameEl = document.getElementById('prevCovName');
+    if(nameEl && nameEl.dataset.scale){
+      const sc = nameEl.dataset.scale;
+      const el = document.getElementById('covName');
+      if(el) el.style.transform = `scale(${sc})`;
+    }
+  };
+})();
 </script>
 </body>
 </html>
