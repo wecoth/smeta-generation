@@ -285,6 +285,13 @@ html,body{height:100%;font-family:'Onest',sans-serif;background:var(--bg);color:
 /* ======================= */
 /* ====== PDF / PRINT ===== */
 /* ======================= */
+@font-face {
+  font-family: 'GostTypeA';
+  src: url('https://raw.githubusercontent.com/MishkinIN/Font_GOST_2.304/master/gost_2.304.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 @media print{
   @page{size:A4 landscape;margin:0}
   .app{display:none!important}
@@ -300,7 +307,7 @@ html,body{height:100%;font-family:'Onest',sans-serif;background:var(--bg);color:
   background:#fff;
   page-break-after:always;
   position:relative;
-  font-family:'Onest',sans-serif;
+  font-family:'GostTypeA',sans-serif;
   color:#1c1c1c;
 }
 .a4:last-child{page-break-after:auto}
@@ -310,65 +317,67 @@ html,body{height:100%;font-family:'Onest',sans-serif;background:var(--bg);color:
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;
   min-height:210mm;
+  background:#fff;
 }
 .cov-circle{
-  width:72px;height:72px;border:2px solid #1c1c1c;border-radius:50%;
+  width:80px;height:80px;border:2px solid #1c1c1c;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-size:26px;font-weight:500;
+  font-size:28px;font-weight:400;
+  font-family:'GostTypeA',sans-serif;
 }
-#covLogoImg{max-height:80px;max-width:200px;display:none}
-.cov-name{font-size:22px;font-weight:400;letter-spacing:5px;text-transform:uppercase;margin-top:10px}
-.cov-slogan{font-size:10px;letter-spacing:4px;color:#888;text-transform:uppercase;margin-top:3px}
-.cov-dtype{font-size:14px;font-weight:300;color:#555;margin-top:50px;letter-spacing:2px}
-.cov-foot{position:absolute;bottom:18mm;right:18mm;display:flex;align-items:center;gap:7px}
-.cov-foot .cfc{width:22px;height:22px;border:1.5px solid #999;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;color:#999}
-.cov-foot .cfn{font-size:9px;font-weight:600;letter-spacing:2px;color:#999}
+#covLogoImg{max-height:90px;max-width:220px;display:none}
+.cov-name{font-size:26px;font-weight:400;letter-spacing:6px;text-transform:uppercase;margin-top:14px;font-family:'GostTypeA',sans-serif}
+.cov-slogan{font-size:9px;letter-spacing:5px;color:#888;text-transform:uppercase;margin-top:5px;font-family:'GostTypeA',sans-serif}
+.cov-dtype{font-size:13px;font-weight:300;color:#444;margin-top:55px;letter-spacing:1px;font-family:'GostTypeA',sans-serif}
+.cov-foot{position:absolute;bottom:18mm;right:18mm;display:flex;align-items:center;gap:8px}
+.cov-foot .cfc{width:24px;height:24px;border:1.5px solid #aaa;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:500;color:#aaa;font-family:'GostTypeA',sans-serif}
+.cov-foot .cfn{font-size:8px;font-weight:400;letter-spacing:2px;color:#aaa;font-family:'GostTypeA',sans-serif}
 
 /* --- INNER PAGE --- */
-.pg{padding:12mm 18mm 14mm;min-height:210mm;display:flex;flex-direction:column}
-.pg-title{font-size:22px;font-weight:400;text-align:center;margin-bottom:8mm;letter-spacing:.5px}
-.pg-foot{margin-top:auto;padding-top:5mm;display:flex;justify-content:flex-end}
-.pg-foot .pfc{width:20px;height:20px;border:1.5px solid #bbb;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;color:#bbb}
-.pg-foot .pfn{font-size:9px;font-weight:600;letter-spacing:2px;color:#bbb;margin-left:5px}
+.pg{padding:14mm 20mm 16mm;min-height:210mm;display:flex;flex-direction:column}
+.pg-title{font-size:20px;font-weight:400;text-align:center;margin-bottom:8mm;letter-spacing:1px;font-family:'GostTypeA',sans-serif}
+.pg-foot{margin-top:auto;padding-top:5mm;display:flex;justify-content:flex-end;align-items:center;gap:7px}
+.pg-foot .pfc{width:22px;height:22px;border:1.5px solid #bbb;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:500;color:#bbb;font-family:'GostTypeA',sans-serif}
+.pg-foot .pfn{font-size:8px;font-weight:400;letter-spacing:2px;color:#bbb;font-family:'GostTypeA',sans-serif}
 
 /* --- PLANNING --- */
-.plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:8mm;flex:1}
-.plan-img-box{border:1px solid #e5e5e5;display:flex;align-items:center;justify-content:center;background:#f9f9f7;min-height:110mm;border-radius:3px;overflow:hidden}
-.plan-img-box img{max-width:100%;max-height:130mm;object-fit:contain}
+.plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:10mm;flex:1}
+.plan-img-box{border:1px solid #ddd;display:flex;align-items:center;justify-content:center;background:#fafafa;min-height:110mm;overflow:hidden}
+.plan-img-box img{max-width:100%;max-height:135mm;object-fit:contain}
 .plan-img-ph{text-align:center;color:#ccc;font-size:28px}
-.obj-info{font-size:11px;line-height:2;color:#333;margin-bottom:4mm}
+.obj-info{font-size:10.5px;line-height:2.1;color:#222;margin-bottom:5mm;font-family:'GostTypeA',sans-serif}
 .obj-info strong{font-weight:500}
-.obj-note{font-size:10.5px;color:#555;line-height:1.85;margin-bottom:4mm}
-.exp-ttl{font-size:12px;font-weight:500;text-align:center;margin:3mm 0 2mm}
-.exp-t{width:100%;border-collapse:collapse;font-size:10.5px}
-.exp-t th{border:1px solid #ccc;padding:5px 7px;text-align:center;font-weight:500;font-size:10px;background:#f5f5f2}
-.exp-t td{border:1px solid #e0e0e0;padding:5px 7px;text-align:center}
+.obj-note{font-size:9.5px;color:#444;line-height:2;margin-bottom:5mm;font-family:'GostTypeA',sans-serif}
+.exp-ttl{font-size:11px;font-weight:500;text-align:center;margin:4mm 0 3mm;font-family:'GostTypeA',sans-serif;letter-spacing:.5px}
+.exp-t{width:100%;border-collapse:collapse;font-size:9.5px;font-family:'GostTypeA',sans-serif}
+.exp-t th{border:1px solid #bbb;padding:6px 8px;text-align:center;font-weight:500;font-size:9px;background:#f0f0ee}
+.exp-t td{border:1px solid #ddd;padding:5px 8px;text-align:center}
 .exp-t td:first-child{text-align:left}
-.exp-t tfoot td{font-weight:600;background:#f5f5f2;border:1px solid #ccc;padding:5px 7px;text-align:center}
+.exp-t tfoot td{font-weight:600;background:#f0f0ee;border:1px solid #bbb;padding:6px 8px;text-align:center}
 .exp-t tfoot td:first-child{text-align:right}
 
 /* --- SMETA TABLE --- */
-.smeta-ttl{font-size:22px;font-weight:400;text-align:center;margin-bottom:7mm;letter-spacing:.5px}
-.sm-t{width:100%;border-collapse:collapse;font-size:10px}
-.sm-t th{border:1px solid #ccc;padding:5px 6px;text-align:center;font-weight:500;font-size:9.5px;background:#f5f5f2;line-height:1.3}
-.sm-t td{border:1px solid #e0e0e0;padding:5px 6px;vertical-align:top;line-height:1.4}
-.sm-t td:first-child{text-align:center;width:24px}
+.smeta-ttl{font-size:18px;font-weight:400;text-align:center;margin-bottom:7mm;letter-spacing:1px;font-family:'GostTypeA',sans-serif}
+.sm-t{width:100%;border-collapse:collapse;font-size:9px;font-family:'GostTypeA',sans-serif}
+.sm-t th{border:1px solid #bbb;padding:6px 5px;text-align:center;font-weight:500;font-size:8.5px;background:#f0f0ee;line-height:1.4}
+.sm-t td{border:1px solid #ddd;padding:5px 5px;vertical-align:top;line-height:1.5}
+.sm-t td:first-child{text-align:center;width:26px}
 .sm-t td:nth-child(3){text-align:center}
 .sm-t td:nth-child(4){text-align:center}
 .sm-t td:nth-child(5){text-align:right}
 .sm-t td:nth-child(6){text-align:right;font-weight:500}
-.sm-t .tot-r td{font-weight:700;font-size:11px}
+.sm-t .tot-r td{font-weight:600;font-size:10px;background:#f0f0ee}
 
 /* --- FINAL --- */
-.fin-t{width:100%;border-collapse:collapse;font-size:11px;margin-top:3mm}
-.fin-t th{border:1px solid #ccc;padding:6px 10px;background:#f5f5f2;font-weight:500;font-size:10px;text-align:center}
-.fin-t td{border:1px solid #e0e0e0;padding:7px 10px}
+.fin-t{width:100%;border-collapse:collapse;font-size:10px;margin-top:3mm;font-family:'GostTypeA',sans-serif}
+.fin-t th{border:1px solid #bbb;padding:7px 10px;background:#f0f0ee;font-weight:500;font-size:9px;text-align:center}
+.fin-t td{border:1px solid #ddd;padding:8px 10px}
 .fin-t td:first-child{text-align:center;width:28px}
 .fin-t td:nth-child(5){text-align:right}
 .fin-t td:nth-child(6){text-align:right;font-weight:600}
 .fin-total{display:flex;justify-content:flex-end;gap:14px;align-items:baseline;margin-top:6mm}
-.fin-total span{font-size:12px;color:#666}
-.fin-total strong{font-size:20px;font-weight:500}
+.fin-total span{font-size:11px;color:#555;font-family:'GostTypeA',sans-serif}
+.fin-total strong{font-size:18px;font-weight:500;font-family:'GostTypeA',sans-serif}
 </style>
 </head>
 <body>
